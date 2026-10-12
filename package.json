@@ -1,0 +1,18 @@
+{
+  "name": "matematicas-vs-zombis-mobile",
+  "version": "4.4.4",
+  "private": true,
+  "scripts": {
+    "sync": "cap sync",
+    "android": "cap run android",
+    "ios": "cap run ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}

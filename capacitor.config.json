@@ -1,0 +1,8 @@
+{
+  "appId": "ec.edu.matematicasvszombis",
+  "appName": "Matematicas vs Zombis",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
