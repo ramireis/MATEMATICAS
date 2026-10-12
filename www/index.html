@@ -216,6 +216,7 @@ body{min-height:0}
   .game-split .quiz .answer{padding:8px 10px;font-size:14px}
 }
 </style>
+<link rel="stylesheet" href="android-mobile-fixes.css">
 </head>
 <body>
 <main class="app">
@@ -706,11 +707,23 @@ function mzClean(s){return String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27
 if('speechSynthesis'in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
 function mzSpeak(text,keep){
   if(!keep)mzFbText=text;
-  if(mzFbMuted||!('speechSynthesis'in window))return;
+  if(mzFbMuted)return;
+  const nativeTTS=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.TextToSpeech;
+  if(nativeTTS&&typeof nativeTTS.speak==='function'){
+    try{
+      if(typeof nativeTTS.stop==='function')nativeTTS.stop().catch(()=>{});
+      nativeTTS.speak({text:String(text),lang:'es-ES',rate:0.95,pitch:1,volume:1,category:'ambient'}).catch(()=>mzSpeakWeb(text));
+      return;
+    }catch(e){}
+  }
+  mzSpeakWeb(text);
+}
+function mzSpeakWeb(text){
+  if(!('speechSynthesis'in window))return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='es-EC';u.rate=.95;u.pitch=1;
+    const u=new SpeechSynthesisUtterance(String(text));
+    u.lang='es-ES';u.rate=.95;u.pitch=1;
     const vs=speechSynthesis.getVoices()||[];
     const v=vs.find(x=>/^es[-_]/i.test(x.lang))||vs.find(x=>/^es/i.test(x.lang));
     if(v)u.voice=v;
@@ -753,6 +766,7 @@ function mzCloseFeedback(){
   mzFbOpen=false;
   mzFbEl.classList.add('hidden');
   try{speechSynthesis.cancel()}catch(e){}
+  try{window.Capacitor?.Plugins?.TextToSpeech?.stop?.()}catch(e){}
   if(mzFbResume){mzFbResume=false;state.running=true;state.last=performance.now();requestAnimationFrame(loop)}
   if(mzFbPending){mzFbPending=false;mzFinishQ()}
 }
