@@ -80,3 +80,12 @@ body{min-height:100dvh!important}
 .hero-dom.hero-fenixazul .hero-aura,.hero-dom.hero-fenixazul .hero-hair,.hero-dom.hero-fenixazul .hero-head,.hero-dom.hero-fenixazul .hero-eye,.hero-dom.hero-fenixazul .hero-body,.hero-dom.hero-fenixazul .hero-leg,.hero-dom.hero-fenixazul .hero-gun,.hero-dom.hero-fenixdorado .hero-aura,.hero-dom.hero-fenixdorado .hero-hair,.hero-dom.hero-fenixdorado .hero-head,.hero-dom.hero-fenixdorado .hero-eye,.hero-dom.hero-fenixdorado .hero-body,.hero-dom.hero-fenixdorado .hero-leg,.hero-dom.hero-fenixdorado .hero-gun{display:none!important}
 .hero-opt[data-hero="fenixazul"]{border-color:#35d5ff!important}
 .hero-opt[data-hero="fenixdorado"]{border-color:#ffd166!important}
+
+/* Un solo combatiente: canvas es la fuente única de dibujo. */
+#heroDom{display:none!important}
+/* Registro y selección inicial en vertical; la partida gira a horizontal por API nativa. */
+@media(orientation:portrait){
+ #startOverlay .modal,#registrationOverlay .modal{width:min(96vw,520px)!important;max-height:calc(100dvh - 20px)!important;overflow-y:auto!important}
+ #startOverlay .hero-picker{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ #registrationOverlay input{max-width:100%!important;box-sizing:border-box!important}
+}
