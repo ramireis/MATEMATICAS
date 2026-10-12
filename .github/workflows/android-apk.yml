@@ -56,7 +56,7 @@ jobs:
           from pathlib import Path
           p=Path('android/app/src/main/AndroidManifest.xml')
           s=p.read_text()
-          s=s.replace('<activity ', '<activity android:screenOrientation="sensorLandscape" ', 1)
+          s=s.replace('<activity ', '<activity android:screenOrientation="portrait" ', 1)
           p.write_text(s)
           print('Orientación horizontal configurada:', 'sensorLandscape' in s)
           PY
