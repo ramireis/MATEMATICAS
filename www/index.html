@@ -522,6 +522,10 @@ else if(q.visual==='color'){let parts=q.prompt.split(' '),colors=['#0c7bdc','#9b
 /* Ajusta el panel de teoría al espacio real de la pantalla (sin barras de scroll). */
 function mzFitScenario(){
   const box=document.getElementById('scenario');if(!box)return;
+  if(window.Capacitor?.isNativePlatform?.() || window.innerWidth<=900){
+    box.querySelectorAll('.theory-card,.theory-card .think,.theory-card .example,.story-beat,.reason-box').forEach(el=>{el.style.display='';el.style.fontSize='';el.style.lineHeight='';});
+    box.style.overflow='visible';box.style.maxHeight='none';return;
+  }
   const quiz=box.closest('.quiz'),card=box.querySelector('.theory-card'),kids=[...box.children];
   const parts=['.theory-card .think','.theory-card .example','.story-beat','.reason-box'].map(s=>box.querySelector(s)).filter(Boolean);
   parts.forEach(p=>p.style.display='');
