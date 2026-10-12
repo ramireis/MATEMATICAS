@@ -72,3 +72,11 @@ body{min-height:100dvh!important}
 .hero-dom.hero-fenix.firing{animation:fenixFire .24s ease-out!important}
 @keyframes fenixFire{0%{filter:drop-shadow(0 0 6px #ff5649)}50%{filter:drop-shadow(0 0 22px #5cf4ff);transform:scale(var(--hero-scale,.54)) translateX(-5px)}100%{filter:drop-shadow(0 0 9px #ff5649)}}
 .hero-opt[data-hero="fenix"]{border-color:#ec735c!important}
+
+/* Variantes del mismo arquero, diferenciadas por paleta de color */
+.hero-dom.hero-fenixazul,.hero-dom.hero-fenixdorado{width:125px!important;height:215px!important;background:url('arquero-fenix.svg') center bottom/contain no-repeat!important;animation:heroIdle 1.4s ease-in-out infinite!important}
+.hero-dom.hero-fenixazul{filter:hue-rotate(145deg) saturate(1.7) drop-shadow(0 0 10px #35d5ff)!important}
+.hero-dom.hero-fenixdorado{filter:sepia(.9) saturate(2) hue-rotate(340deg) drop-shadow(0 0 10px #ffd166)!important}
+.hero-dom.hero-fenixazul .hero-aura,.hero-dom.hero-fenixazul .hero-hair,.hero-dom.hero-fenixazul .hero-head,.hero-dom.hero-fenixazul .hero-eye,.hero-dom.hero-fenixazul .hero-body,.hero-dom.hero-fenixazul .hero-leg,.hero-dom.hero-fenixazul .hero-gun,.hero-dom.hero-fenixdorado .hero-aura,.hero-dom.hero-fenixdorado .hero-hair,.hero-dom.hero-fenixdorado .hero-head,.hero-dom.hero-fenixdorado .hero-eye,.hero-dom.hero-fenixdorado .hero-body,.hero-dom.hero-fenixdorado .hero-leg,.hero-dom.hero-fenixdorado .hero-gun{display:none!important}
+.hero-opt[data-hero="fenixazul"]{border-color:#35d5ff!important}
+.hero-opt[data-hero="fenixdorado"]{border-color:#ffd166!important}
