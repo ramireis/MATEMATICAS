@@ -709,16 +709,39 @@ const mzFbEl=$('#fbOverlay');
 function mzClean(s){return String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,' ').replace(/\s+/g,' ').trim()}
 /* Pre-carga de voces: funciona en Windows (Chrome/Edge/Electron), Android e iOS. */
 if('speechSynthesis'in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
+let mzVoiceChoice=null;
+async function mzChooseVoice(tts){
+  if(mzVoiceChoice)return mzVoiceChoice;
+  const result=await tts.getSupportedVoices();
+  const voices=Array.isArray(result?.voices)?result.voices:[];
+  const spanish=voices.map((v,i)=>({...v,index:i})).filter(v=>/^es([_-]|$)/i.test(v.lang||''));
+  if(!spanish.length)return {lang:'es-ES'};
+  const score=v=>{
+    const name=String(v.name||'').toLowerCase(),lang=String(v.lang||'').toLowerCase();
+    let n=lang.startsWith('es-ec')?70:lang.startsWith('es-mx')?60:lang.startsWith('es-us')?55:lang.startsWith('es-')?35:10;
+    if(/female|femenina|mujer|woman|sofia|sofía|lucia|lucía|paulina|monica|mónica|helena|laura|sabina|isabela|valeria|camila|dalia|paloma/i.test(name))n+=100;
+    if(/male|masculin|hombre|man|jorge|diego|carlos|pablo|juan/i.test(name))n-=100;
+    if(/network|neural|natural|premium|enhanced|wavenet/i.test(name))n+=25;
+    return n;
+  };
+  spanish.sort((x,y)=>score(y)-score(x));
+  const best=spanish[0];
+  mzVoiceChoice={lang:best.lang||'es-ES',voice:best.index};
+  return mzVoiceChoice;
+}
 function mzSpeak(text,keep){
   if(!keep)mzFbText=text;
   if(mzFbMuted)return;
-  const nativeTTS=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.TextToSpeech;
+  const nativeTTS=window.Capacitor?.Plugins?.TextToSpeech;
   if(nativeTTS&&typeof nativeTTS.speak==='function'){
-    try{
-      if(typeof nativeTTS.stop==='function')nativeTTS.stop().catch(()=>{});
-      nativeTTS.speak({text:String(text),lang:'es-ES',rate:0.95,pitch:1,volume:1,category:'ambient'}).catch(()=>mzSpeakWeb(text));
-      return;
-    }catch(e){}
+    (async()=>{
+      try{
+        const choice=await mzChooseVoice(nativeTTS);
+        await nativeTTS.stop().catch(()=>{});
+        await nativeTTS.speak({text:String(text),...choice,rate:0.92,pitch:1.08,volume:1,queueStrategy:0});
+      }catch(e){mzSpeakWeb(text)}
+    })();
+    return;
   }
   mzSpeakWeb(text);
 }
@@ -727,10 +750,12 @@ function mzSpeakWeb(text){
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(String(text));
-    u.lang='es-ES';u.rate=.95;u.pitch=1;
-    const vs=speechSynthesis.getVoices()||[];
-    const v=vs.find(x=>/^es[-_]/i.test(x.lang))||vs.find(x=>/^es/i.test(x.lang));
-    if(v)u.voice=v;
+    u.lang='es-EC';u.rate=.92;u.pitch=1.08;
+    const voices=speechSynthesis.getVoices()||[];
+    const spanish=voices.filter(v=>/^es([_-]|$)/i.test(v.lang||''));
+    const female=spanish.find(v=>/female|femenina|mujer|sofia|sofía|lucia|lucía|paulina|monica|mónica|helena|laura|sabina|isabela|valeria|camila/i.test(v.name||''));
+    const v=female||spanish.find(v=>/^es-ec/i.test(v.lang))||spanish.find(v=>/^es-mx/i.test(v.lang))||spanish[0];
+    if(v){u.voice=v;u.lang=v.lang}
     speechSynthesis.speak(u);
   }catch(e){}
 }
