@@ -65,3 +65,10 @@ body{min-height:100dvh!important}
  .game-split>.stage{position:relative!important;height:42dvh!important;min-height:230px!important}
  .game-split>.quiz{min-height:0!important}
 }
+
+/* Fénix: personaje vectorial transparente sobre el escenario */
+.hero-dom.hero-fenix{width:125px!important;height:215px!important;background:url('arquero-fenix.svg') center bottom/contain no-repeat!important;filter:drop-shadow(0 0 11px #ff564977)!important;animation:heroIdle 1.4s ease-in-out infinite!important}
+.hero-dom.hero-fenix .hero-aura,.hero-dom.hero-fenix .hero-hair,.hero-dom.hero-fenix .hero-head,.hero-dom.hero-fenix .hero-eye,.hero-dom.hero-fenix .hero-body,.hero-dom.hero-fenix .hero-leg,.hero-dom.hero-fenix .hero-gun{display:none!important}
+.hero-dom.hero-fenix.firing{animation:fenixFire .24s ease-out!important}
+@keyframes fenixFire{0%{filter:drop-shadow(0 0 6px #ff5649)}50%{filter:drop-shadow(0 0 22px #5cf4ff);transform:scale(var(--hero-scale,.54)) translateX(-5px)}100%{filter:drop-shadow(0 0 9px #ff5649)}}
+.hero-opt[data-hero="fenix"]{border-color:#ec735c!important}
