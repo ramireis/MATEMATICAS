@@ -1,0 +1,13 @@
+INSTALADOR PROTEGIDO - MATEMATICAS VS ZOMBIS 4.4.4
+
+1. Extraiga este ZIP completo a una carpeta en Windows 64 bits.
+2. Abra PowerShell en esa carpeta.
+3. Ejecute: powershell -ExecutionPolicy Bypass -File .\CONSTRUIR_INSTALADOR.ps1
+4. El resultado sera Matematicas_vs_Zombis_4.4.4_Instalador.exe.
+5. Ejecute el instalador y acepte el aviso de administrador.
+6. El juego quedara en C:\Program Files\Matematicas vs Zombis.
+7. Solo se creara un acceso directo en el escritorio, no los archivos del juego.
+
+IMPORTANTE: Un administrador puede borrar archivos. Program Files evita
+modificaciones accidentales por cuentas sin permisos de administrador.
+El instalador no se ha probado en un equipo Windows desde este entorno.
