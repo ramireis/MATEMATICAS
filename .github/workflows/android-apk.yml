@@ -52,6 +52,14 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          s=p.read_text()
+          s=s.replace('<activity ', '<activity android:screenOrientation="sensorLandscape" ', 1)
+          p.write_text(s)
+          print('Orientación horizontal configurada:', 'sensorLandscape' in s)
+          PY
           test -f android/gradlew
       - name: Compilar APK
         shell: bash
