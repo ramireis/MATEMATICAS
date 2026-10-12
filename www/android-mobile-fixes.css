@@ -1,0 +1,19 @@
+/* Corrección de usabilidad Android: el contenido esencial nunca queda cortado. */
+html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto}
+body{min-height:100dvh!important}
+.app{height:auto!important;min-height:100dvh!important;overflow:visible!important;display:block!important;padding:10px!important}
+.game-split{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:auto!important;align-items:start!important;min-height:0!important}
+.game-split .stage{height:auto!important;min-height:190px!important;aspect-ratio:16/7!important;align-self:start!important}
+.game-split .stage canvas{height:auto!important;min-height:190px!important;aspect-ratio:16/7!important;object-fit:contain!important}
+.game-split .quiz{height:auto!important;max-height:none!important;min-height:300px!important;overflow:visible!important;display:flex!important;flex-direction:column!important}
+.game-split .quiz .answers,.game-split .quiz .scenario,.game-split .quiz .qrow{flex-shrink:0!important;max-height:none!important;overflow:visible!important}
+.game-split .quiz .answer{min-height:44px!important;white-space:normal!important}
+.game-split .quiz .scenario,.game-split .quiz .story-beat{display:block!important}
+.game-split .quiz .learning-strip{flex-wrap:wrap!important;overflow:visible!important}
+.overlay{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+.overlay>.modal,.modal{max-height:calc(100dvh - 18px)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+#fbOverlay{z-index:10000!important}
+#fbOverlay .fb-modal{max-height:calc(100dvh - 18px)!important;overflow-y:auto!important}
+@media(max-width:900px){.top{flex-wrap:wrap!important}.hud{grid-template-columns:repeat(4,minmax(0,1fr))!important}.world-map{grid-template-columns:repeat(4,minmax(0,1fr))!important}.game-split{grid-template-columns:minmax(0,1fr)!important}.game-split .stage{min-height:190px!important}.game-split .quiz{min-height:360px!important}}
+@media(orientation:landscape) and (max-height:650px){.top{gap:5px!important}.top .brand{font-size:18px!important}.hud{grid-template-columns:repeat(4,minmax(0,1fr))!important}.card{padding:6px!important}.world-map{grid-template-columns:repeat(7,minmax(0,1fr))!important}.game-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.game-split .quiz{min-height:360px!important}.game-split .stage{min-height:190px!important}}
+@media print{html,body,.app{height:auto!important;overflow:visible!important}}
