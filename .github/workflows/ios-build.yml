@@ -1,0 +1,68 @@
+name: Compilar iOS (iPhone y simulador)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 55
+    steps:
+      - name: Obtener proyecto
+        uses: actions/checkout@v4
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Generar proyecto iOS con Capacitor
+        run: |
+          set -euo pipefail
+          npx cap add ios
+          npx cap sync ios
+          test -d ios/App/App.xcworkspace
+      - name: Configurar orientaciones de iPhone y iPad
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLIST=ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c 'Delete :UISupportedInterfaceOrientations' "$PLIST" || true
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations array' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations:1 string UIInterfaceOrientationLandscapeLeft' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations:2 string UIInterfaceOrientationLandscapeRight' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Delete :UISupportedInterfaceOrientations~ipad' "$PLIST" || true
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations~ipad array' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations~ipad:0 string UIInterfaceOrientationPortrait' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations~ipad:1 string UIInterfaceOrientationLandscapeLeft' "$PLIST"
+          /usr/libexec/PlistBuddy -c 'Add :UISupportedInterfaceOrientations~ipad:2 string UIInterfaceOrientationLandscapeRight' "$PLIST"
+          plutil -lint "$PLIST"
+      - name: Compilar aplicación para simulador
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/ios-simulator" CODE_SIGNING_ALLOWED=NO build
+          test -d "$RUNNER_TEMP/ios-simulator/Build/Products/Debug-iphonesimulator/App.app"
+          ditto -c -k --sequesterRsrc --keepParent "$RUNNER_TEMP/ios-simulator/Build/Products/Debug-iphonesimulator/App.app" "$GITHUB_WORKSPACE/Matematicas_vs_Zombis_iOS_Simulador.zip"
+      - name: Compilar aplicación iPhone sin firmar
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/ios-device" CODE_SIGNING_ALLOWED=NO build
+          APP="$RUNNER_TEMP/ios-device/Build/Products/Release-iphoneos/App.app"
+          test -d "$APP"
+          mkdir -p "$RUNNER_TEMP/unsigned/Payload"
+          ditto "$APP" "$RUNNER_TEMP/unsigned/Payload/App.app"
+          cd "$RUNNER_TEMP/unsigned"
+          zip -qry "$GITHUB_WORKSPACE/Matematicas_vs_Zombis_iOS_SIN_FIRMA.ipa" Payload
+      - name: Publicar aplicaciones iOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: Matematicas_vs_Zombis_iOS_compilacion
+          path: |
+            Matematicas_vs_Zombis_iOS_Simulador.zip
+            Matematicas_vs_Zombis_iOS_SIN_FIRMA.ipa
+          if-no-files-found: error
