@@ -17,3 +17,20 @@ body{min-height:100dvh!important}
 @media(max-width:900px){.top{flex-wrap:wrap!important}.hud{grid-template-columns:repeat(4,minmax(0,1fr))!important}.world-map{grid-template-columns:repeat(4,minmax(0,1fr))!important}.game-split{grid-template-columns:minmax(0,1fr)!important}.game-split .stage{min-height:190px!important}.game-split .quiz{min-height:360px!important}}
 @media(orientation:landscape) and (max-height:650px){.top{gap:5px!important}.top .brand{font-size:18px!important}.hud{grid-template-columns:repeat(4,minmax(0,1fr))!important}.card{padding:6px!important}.world-map{grid-template-columns:repeat(7,minmax(0,1fr))!important}.game-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.game-split .quiz{min-height:360px!important}.game-split .stage{min-height:190px!important}}
 @media print{html,body,.app{height:auto!important;overflow:visible!important}}
+
+/* Android v4.4.4: aislamiento estricto entre escena y panel académico */
+.game-split{width:100%!important;max-width:100%!important;min-width:0!important;column-gap:12px!important;box-sizing:border-box!important}
+.game-split>.stage,.game-split>.quiz{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;position:relative!important}
+.game-split>.stage{width:100%!important;overflow:hidden!important;isolation:isolate!important;contain:paint!important}
+.game-split>.stage canvas{display:block!important;width:100%!important;max-width:100%!important}
+.game-split>.stage .banner{max-width:calc(100% - 24px)!important;overflow:hidden!important;font-size:clamp(11px,1.4vw,18px)!important;line-height:1.15!important}
+.game-split>.stage .hero-dom{--hero-scale:.54!important;left:2%!important;bottom:2%!important}
+.game-split>.quiz{width:100%!important;overflow-wrap:anywhere!important;z-index:1!important}
+.game-split>.quiz .question{white-space:normal!important;overflow-wrap:anywhere!important}
+@media(orientation:landscape) and (max-height:650px){
+ .game-split{grid-template-columns:minmax(0,48%) minmax(0,52%)!important;gap:8px!important}
+ .game-split>.stage{min-height:0!important}
+ .game-split>.stage .hero-dom{--hero-scale:.46!important}
+ .game-split>.stage .banner{left:8px!important;top:8px!important}
+ .game-split>.quiz{min-height:380px!important}
+}
