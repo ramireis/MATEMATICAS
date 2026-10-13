@@ -1,2 +1,21 @@
-me":"Matemáticas vs. Zombis · Estudiante","short_name":"MZ Estudiante","start_url":"./index.html","display":"standalone","background_color":"#071525","theme_color":"#071525","description":"Aplicación estudiantil de aventura matemática con progreso seguro."}
-cons
+{
+  "id": "./",
+  "name": "Matemáticas vs. Zombis · Estudiante",
+  "short_name": "MZ Zombis",
+  "description": "Juego educativo de matemáticas con evaluaciones y reportes.",
+  "lang": "es",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#071525",
+  "theme_color": "#071525",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
