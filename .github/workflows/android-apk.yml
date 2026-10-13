@@ -70,7 +70,7 @@ jobs:
           p=activities[0]
           original=p.read_text()
           import re
-          pkg=re.search(r'^package\\s+([\\w.]+);',original,re.M)
+          pkg=re.search(r'^package\s+([\w.]+);',original,re.M)
           assert pkg, 'No se pudo identificar el paquete de Android'
           p.write_text('''package '''+pkg.group(1)+''';
 
