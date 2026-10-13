@@ -930,7 +930,28 @@ function mzOpenReprint(){
   $('#endOverlay').classList.add('hidden');
   mzShowReportAt(0);
 }
-['#reprintBtn','#reprintTopBtn','#reprintStartBtn','#reprintRegBtn','#reprintEndBtn'].forEach(s=>{const el=$(s);if(el)el.onclick=mzOpenReprint});
+/* Menú de evaluaciones: selector explícito de reportes aprobados y reimpresión. */
+function mzOpenApprovedLibrary(){
+  let all=[];try{all=JSON.parse(localStorage.getItem('mz_reports_8')||'[]')}catch(e){}
+  mzReportList=all.filter(mzPrintable);
+  if(!mzReportList.length){showToast('No hay evaluaciones con nota de 8/10 o más para reimprimir.',3600);return}
+  if(!$('#worldOverlay').classList.contains('hidden'))mzReprintOrigin='map';
+  else if(!$('#endOverlay').classList.contains('hidden'))mzReprintOrigin='end';
+  else if(!$('#sceneOverlay').classList.contains('hidden'))mzReprintOrigin='scene';
+  else if($('#startOverlay').classList.contains('hidden')&&$('#registrationOverlay').classList.contains('hidden'))mzReprintOrigin='game';
+  else mzReprintOrigin='start';
+  mzReprintResume=!!state.running;if(mzReprintResume)state.running=false;
+  ['#worldOverlay','#sceneOverlay','#endOverlay'].forEach(id=>$(id).classList.add('hidden'));
+  const rows=mzReportList.map((r,i)=>'<button class="history-item" data-approved-report="'+i+'"><b>📄 Isla '+escapeHTML(String(r.island))+' · '+escapeHTML(String(r.score))+'/10</b><br><small>'+escapeHTML(r.student||'Estudiante')+' · '+escapeHTML(r.date||'Sin fecha')+' · Ver y reimprimir</small></button>').join('');
+  $('#reportContent').innerHTML='<h2>🖨️ Evaluaciones aprobadas</h2><p>Selecciona una evaluación para verla, imprimirla o guardarla como PDF.</p><div class="history-list">'+rows+'</div>';
+  $('#printReportBtn').style.display='none';
+  $('#reportNavBox').style.display='none';
+  $('#printBlockedNote').style.display='none';
+  $('#continueReportBtn').textContent='◀ Volver al juego';
+  $('#reportOverlay').classList.remove('hidden');
+  document.querySelectorAll('[data-approved-report]').forEach(b=>b.onclick=()=>mzShowReportAt(Number(b.dataset.approvedReport)));
+}
+['#reprintBtn','#reprintTopBtn','#reprintStartBtn','#reprintRegBtn','#reprintEndBtn'].forEach(s=>{const el=$(s);if(el)el.onclick=mzOpenApprovedLibrary});
 /* ===== Selección de héroe que dispara ===== */
 const mzFenixImage=new Image();mzFenixImage.src='arquero-fenix.svg';
 const mzHeroes={
