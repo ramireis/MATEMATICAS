@@ -60,6 +60,57 @@ jobs:
           p.write_text(s)
           print('Orientación horizontal configurada:', 'sensorLandscape' in s)
           PY
+          # Puente nativo: window.AndroidPrint.print() invoca PrintManager.
+          # Se genera en cada compilación porque android/ no está versionado.
+          python3 - <<'PYJAVA'
+          from pathlib import Path
+          root=Path('android/app/src/main/java')
+          activities=list(root.rglob('MainActivity.java'))
+          assert len(activities)==1, f'MainActivity no encontrada o ambigua: {activities}'
+          p=activities[0]
+          original=p.read_text()
+          import re
+          pkg=re.search(r'^package\\s+([\\w.]+);',original,re.M)
+          assert pkg, 'No se pudo identificar el paquete de Android'
+          p.write_text('''package '''+pkg.group(1)+''';
+
+          import android.os.Bundle;
+          import android.content.Context;
+          import android.print.PrintManager;
+          import android.webkit.JavascriptInterface;
+          import android.webkit.WebView;
+          import android.widget.Toast;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  WebView webView = getBridge().getWebView();
+                  webView.addJavascriptInterface(new PrintBridge(webView), "AndroidPrint");
+              }
+
+              private class PrintBridge {
+                  private final WebView webView;
+                  PrintBridge(WebView webView) { this.webView = webView; }
+
+                  @JavascriptInterface
+                  public void print() {
+                      runOnUiThread(() -> {
+                          try {
+                              PrintManager manager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+                              if (manager == null) throw new IllegalStateException("Servicio de impresión no disponible");
+                              manager.print("Reporte_Matematicas", webView.createPrintDocumentAdapter("Reporte_Matematicas"), null);
+                          } catch (Exception e) {
+                              Toast.makeText(MainActivity.this, "No se pudo abrir la impresión: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                          }
+                      });
+                  }
+              }
+          }
+          ''')
+          print('Puente nativo AndroidPrint instalado:',p)
+          PYJAVA
           test -f android/gradlew
       - name: Compilar APK
         shell: bash
